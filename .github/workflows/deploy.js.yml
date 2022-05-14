@@ -29,6 +29,7 @@ jobs:
     - run: echo ::set-env name=REPOSITORY_NAME::$(echo "$GITHUB_REPOSITORY" | awk -F / '{print $2}')
       shell: bash
     - name: Install packages
-    - run: npm i
+      run: npm i
     - run: git config user.name "Vasiliy Rusin" && git config user.email "RusinVA@gmail.com"
-    - run: npm run deploy
+    - name: Deploy
+      run: npm run deploy
