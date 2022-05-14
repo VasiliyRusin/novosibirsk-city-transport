@@ -1,0 +1,12 @@
+$bus-color: crimson;
+$minibus-color: tomato;
+$trolleybus-color: seagreen;
+$tram-color: mediumpurple;
+//$tram-color: royalblue;
+
+:export {
+    busColor: $bus-color;
+    minibusColor: $minibus-color;
+    trolleybusColor: $trolleybus-color;
+    tramColor: $tram-color;
+}

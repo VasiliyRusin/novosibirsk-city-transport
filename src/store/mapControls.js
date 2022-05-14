@@ -1,16 +1,19 @@
 import Vue from "vue";
 
+const MAP_CENTER = [54.99997630952814, 82.83210754394533];
 const MIN_ZOOM = 10;
-const MAX_ZOOM = 16;
+const MAX_ZOOM = 18;
+const INITIAL_ZOOM = 11;
+const MAX_BOUNDS = [
+  [55.452556, 81.874842],
+  [54.531149, 83.690061]
+];
 
 export default {
   namespaced: true,
   state: {
-    jams: false,
-    zoom: 13,
-    rotation: 0,
-    center: [0, 0],
-    activeType: undefined,
+    zoom: INITIAL_ZOOM,
+    center: MAP_CENTER,
     currentPosition: undefined
   },
   
@@ -37,20 +40,9 @@ export default {
     maxZoom () {
       return MAX_ZOOM;
     },
-    
-    types () {
-      return [
-        "search",
-        "bus",
-        "trolleybus",
-        "tram",
-        "taxiBus"
-      ];
-    },
   
-    // Создаем геттер что-бы обезопасить нас от случайного изменения activeType
-    getActiveType (state) {
-      return state.activeType;
+    maxBounds () {
+      return MAX_BOUNDS;
     }
   }
 };

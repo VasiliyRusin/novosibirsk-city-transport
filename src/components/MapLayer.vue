@@ -1,46 +1,43 @@
 <template>
-    <vl-map :load-tiles-while-animating="true" :load-tiles-while-interacting="true">
-        <vl-view :zoom.sync="zoom" :center.sync="center" :rotation.sync="rotation"></vl-view>
-        
-        <vl-geoloc @update:position="centerMapToUserPosition">
-            <template slot-scope="geoloc">
-                <vl-feature v-if="geoloc.position" id="position-feature">
-                    <vl-geom-point :coordinates="geoloc.position"></vl-geom-point>
-                </vl-feature>
-            </template>
-        </vl-geoloc>
-        
-        <vl-layer-tile>
-            <vl-source-xyz :url="mapTileUrl" projection="EPSG:3395"></vl-source-xyz>
-        </vl-layer-tile>
-        
-        <vl-layer-tile v-if="jams">
-            <vl-source-xyz :url="jamsTileUrl" projection="EPSG:3395"></vl-source-xyz>
-        </vl-layer-tile>
-        
-        <!--        <vl-layer-tile>-->
-        <!--            <vl-source-xyz url="https://mt1.google.com/vt/lyrs=h&x={x}&y={y}&z={z}"></vl-source-xyz>-->
-        <!--        </vl-layer-tile>-->
-    </vl-map>
+    <div>
+        <LMap
+            ref="map"
+            class="map"
+            v-bind="mapAttrs"
+            :zoom.sync="zoom"
+            :center.sync="center"
+            @ready="mapReady">
+            <LTileLayer :url="mapTileURL"></LTileLayer>
+            <LControlZoom v-bind="mapZoomAttrs"></LControlZoom>
+            <LControlAttribution :prefix="false"></LControlAttribution>
+            <MapLayerRouteLines></MapLayerRouteLines>
+        </LMap>
+    </div>
 </template>
 
 <script>
+  import MapLayerRouteLines from "@/components/MapLayerRouteLines";
   import { mapFields } from "@vasiliyrusin/vue-mapfields";
+  import { mapGetters } from "vuex";
+  
+  import L from "leaflet";
+  import { LMap, LTileLayer, LControlZoom, LControlAttribution } from "vue2-leaflet";
+
+  import "leaflet/dist/leaflet.css";
   
   export default {
     name: "MapLayer",
-    
-    created () {
-      this.timestamp = Math.trunc(new Date() / 1000);
-      
-      this.intervalId = setInterval(() => {
-        this.timestamp = Math.trunc(new Date() / 1000);
-      }, 10000);
+    components: {
+      MapLayerRouteLines,
+      LMap,
+      LTileLayer,
+      LControlZoom,
+      LControlAttribution
     },
   
     data () {
       return {
-        timestamp: undefined
+        map: undefined
       };
     },
 
@@ -50,43 +47,192 @@
         base: "",
         action: "UPDATE_UI"
       }),
+  
+      ...mapGetters("mapControls", ["minZoom", "maxZoom", "maxBounds"]),
       
+      // Используем computed как локальную константу
       devicePixelRatioScale () {
-        return 1;
+        return window.devicePixelRatio;
+      },
+  
+      mapAttrs () {
+        const { minZoom, maxZoom, maxBounds } = this;
+        
+        return {
+          minZoom,
+          maxZoom,
+          maxBounds,
+          crs: L.CRS.EPSG3395,
+          options: {
+            zoomControl: false,
+            attributionControl: false
+          }
+        };
+      },
+      
+      mapZoomAttrs () {
+        return {
+          position: "topright",
+          zoomInText: "<span aria-hidden=\"true\" class=\"material-icons-round zoom-in\">add</span>",
+          zoomOutText: "<span aria-hidden=\"true\" class=\"material-icons-round zoom-in\">remove</span>"
+        };
       },
 
-      mapTileUrl () {
+      mapTileURL () {
         const scale = this.devicePixelRatioScale;
         // https://core-renderer-tiles.maps.yandex.net/tiles?l=map&x={x}&y={y}&z={z}&scale=1&lang=ru_RU
         return `https://core-renderer-tiles.maps.yandex.net/tiles?l=map&x={x}&y={y}&z={z}&scale=${ scale }&lang=ru_RU`;
-      },
-
-      jamsTileUrl () {
-        const scale = this.devicePixelRatioScale;
-        // https://core-jams-rdr-cache.maps.yandex.net/1.1/tiles?l=trf&x={x}&y={y}&z={z}&scale=1&lang=ru_RU&tm=1643026740
-        return `https://core-jams-rdr-cache.maps.yandex.net/1.1/tiles?l=trf&x={x}&y={y}&z={z}&scale=${ scale }&lang=ru_RU&tm=${ this.timestamp }`;
       }
     },
 
     methods: {
-      centerMapToUserPosition (event) {
-        this.center = this.currentPosition = event;
+      mapReady () {
+        this.map = this.$refs.map.mapObject;
+        
+        // this.map.locate();
       }
-    },
-    
-    beforeDestroy () {
-      clearInterval(this.intervalId);
     }
   };
 </script>
 
 <style scoped lang="scss">
-    .vl-map {
+    @use "sass:math";
+    @import "src/scss/variables";
+    
+    .map {
         top: 0;
         left: 0;
         z-index: -1;
         width: 100%;
         height: 100%;
         position: fixed;
+        background-color: transparent;
+    }
+    
+    ::v-deep {
+        .leaflet {
+            &-pane {
+                .icon {
+                    &-item {
+                        display: flex;
+                        border-radius: 50%;
+                        align-items: center;
+                        justify-content: center;
+                        filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.8)) saturate(1.5);
+                        
+                        &.bus {
+                            background-color: $bus-color;
+                        }
+    
+                        &.minibus {
+                            background-color: $minibus-color;
+                        }
+    
+                        &.trolleybus {
+                            background-color: $trolleybus-color;
+                        }
+    
+                        &.tram {
+                            background-color: $tram-color;
+                        }
+                        
+                        &.station {
+                            filter: none;
+                            border-radius: math.div($ui-offset, 3);
+                        }
+                    }
+                }
+            }
+            
+            &-container {
+                font-family: inherit;
+            }
+            
+            @each $position in ["top", "right", "bottom", "left"] {
+                &-#{ $position } {
+                    .leaflet-control {
+                        margin-#{ $position }: 0;
+                    }
+                }
+            }
+            
+            &-bar {
+                border: none;
+            }
+            
+            &-control {
+                &-container {
+                    z-index: 400;
+                    
+                    a[role="button"] {
+                        border: none;
+                        display: grid;
+                        cursor: pointer;
+                        font-size: 160%;
+                        margin: $ui-offset;
+                        border-radius: 50%;
+                        place-content: center;
+                        box-shadow: $ui-shadow;
+                        width: $ui-button-size;
+                        height: $ui-button-size;
+                        background-color: white;
+                        pointer-events: initial;
+                    }
+                }
+                
+                &-zoom {
+                    top: 50%;
+                    right: 0;
+                    display: flex;
+                    position: fixed;
+                    pointer-events: none;
+                    flex-direction: column;
+                    transform: translateY(-50%);
+                
+                    & > .button {
+                        pointer-events: auto;
+                        margin: 0 $ui-offset 0 0;
+                    }
+                }
+            }
+            
+            &-popup {
+                &-content {
+                    margin: 0;
+                    opacity: 0.8;
+                    min-width: 300px;
+                    text-align: center;
+                    
+                    &-wrapper {
+                        z-index: 1;
+                        font-weight: 500;
+                        font-size: 1.05em;
+                        position: relative;
+                        pointer-events: auto;
+                        backdrop-filter: blur(10px);
+                        border-radius:  math.div($ui-offset, 3);
+                        background-color: rgba(255, 255, 255, 0.6);
+                        box-shadow: 0 1px 3px 0 rgb(38 38 38 / 50%);
+                    }
+                }
+                
+                &-tip {
+                    $size: 8px;
+                    
+                    width: $size;
+                    height: $size;
+                    margin: #{ math.div(-$size, 2) } auto 0;
+                    
+                    &-container {}
+                }
+                
+                &-close-button {
+                    $size: 18px;
+                    
+                    width: $size !important;
+                    height: $size !important;
+                }
+            }
+        }
     }
 </style>

@@ -1,15 +1,10 @@
 import Vue from "vue";
 import App from "./App.vue";
+
 import "./registerServiceWorker";
-import router from "./router";
+
 import store from "./store";
-
-import "./projections";
-
-import VueLayers from "vuelayers";
-import "vuelayers/lib/style.css";
-
-Vue.use(VueLayers);
+import router from "./router";
 
 Vue.config.productionTip = false;
 

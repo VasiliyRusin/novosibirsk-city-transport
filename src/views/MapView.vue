@@ -1,5 +1,5 @@
 <template>
-    <div class="home">
+    <div class="map">
         <MapLayer></MapLayer>
         <UILayer></UILayer>
     </div>
@@ -11,7 +11,7 @@
   import MapLayer from "@/components/MapLayer";
 
   export default {
-    name: "Home",
+    name: "MapView",
     components: {
       UILayer,
       MapLayer
