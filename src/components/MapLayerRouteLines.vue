@@ -178,7 +178,7 @@
           tram: TramIcon
         }[item.type];
         const size = item.type === "station" ? 14 : 22;
-        const label = item.type === "station" ? `${ this.typeLabel(item.type) } ${ item.label }` : `${ this.typeLabel(item.type) } №${ item.label }`;
+        const label = `${ this.typeLabel(item.type) } ${ item.type === "station" ? "" : " №" }${ item.label }`;
         
         const vm = new VNodeReactiveCtor({
           propsData: {

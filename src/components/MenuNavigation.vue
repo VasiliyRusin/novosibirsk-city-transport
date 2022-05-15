@@ -6,8 +6,7 @@
             <span class="logo">
                 <NCTLogo></NCTLogo>
             </span>
-            <MenuByNumberSection v-if="active === 'byNumber'" class="section"></MenuByNumberSection>
-            <MenuByRouteSection v-else-if="active === 'byRoute'" class="section"></MenuByRouteSection>
+            <MenuByNumberSection class="section"></MenuByNumberSection>
         </nav>
     </div>
 </template>
@@ -15,32 +14,15 @@
 <script>
   import NCTLogo from "@/components/NCTLogo";
   import MenuByNumberSection from "@/components/MenuByNumberSection";
-  import MenuByRouteSection from "@/components/MenuByRouteSection";
   import SelectedRoutes from "@/components/SelectedRoutes";
   import { mapActions } from "vuex";
   
   export default {
     name: "MenuNavigation",
-    components: { SelectedRoutes, NCTLogo, MenuByNumberSection, MenuByRouteSection },
+    components: { SelectedRoutes, NCTLogo, MenuByNumberSection },
     
     created () {
       this.GET_ROUTES();
-    },
-  
-    data () {
-      return {
-        active: "byNumber",
-        segments: [
-          {
-            label: "По номеру",
-            value: "byNumber"
-          },
-          {
-            label: "По маршруту",
-            value: "byRoute"
-          }
-        ]
-      };
     },
     
     methods: {

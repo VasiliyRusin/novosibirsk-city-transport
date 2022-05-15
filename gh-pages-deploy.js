@@ -1,5 +1,5 @@
-const execa = require("execa");
 const fs = require("fs");
+const execa = require("execa");
 const master = "master";
 
 (async () => {

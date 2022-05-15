@@ -44,12 +44,6 @@
       };
     },
     
-    methods: {
-      setActive (active) {
-        this.active = active;
-      }
-    },
-    
     watch: {
       active (value) {
         this.$emit("input", value);
