@@ -175,8 +175,9 @@
                         box-shadow: $ui-shadow;
                         width: $ui-button-size;
                         height: $ui-button-size;
-                        background-color: white;
                         pointer-events: initial;
+                        backdrop-filter: blur(10px);
+                        background-color: rgba(255, 255, 255, 0.8);
                     }
                 }
                 
@@ -211,7 +212,7 @@
                         pointer-events: auto;
                         backdrop-filter: blur(10px);
                         border-radius:  math.div($ui-offset, 3);
-                        background-color: rgba(255, 255, 255, 0.6);
+                        background-color: rgba(255, 255, 255, 0.8);
                         box-shadow: 0 1px 3px 0 rgb(38 38 38 / 50%);
                     }
                 }
