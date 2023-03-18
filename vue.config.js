@@ -10,7 +10,7 @@ module.exports = {
     appleMobileWebAppCapable: "yes",
     appleMobileWebAppStatusBarStyle: "black-translucent",
     manifestOptions: {
-      display: undefined
+      display: "fullscreen"
       // display_override: ["fullscreen", "window-controls-overlay"]
     }
   },
