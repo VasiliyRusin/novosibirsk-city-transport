@@ -8,9 +8,9 @@ module.exports = {
     themeColor: "white",
     msTileColor: "white",
     appleMobileWebAppCapable: "yes",
-    appleMobileWebAppStatusBarStyle: "black-translucent",
+    appleMobileWebAppStatusBarStyle: "default",
     manifestOptions: {
-      display: "fullscreen"
+      display: "standalone"
       // display_override: ["fullscreen", "window-controls-overlay"]
     }
   },
