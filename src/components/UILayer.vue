@@ -1,5 +1,9 @@
 <template>
-    <div class="ui" :class="{ 'user-scroll-ui': isUserScrollUI }" @touchstart="touchstart" @touchend="touchend">
+    <div
+        class="ui"
+        :class="{ 'user-scroll-ui': isUserScrollUI }"
+        @touchstart="touchstart"
+        @touchend="touchend">
         <MenuNavigation ref="nav"></MenuNavigation>
     </div>
 </template>
@@ -9,19 +13,23 @@
 
   export default {
     name: "UILayer",
-    components: { MenuNavigation },
-  
+    components: {
+      MenuNavigation
+    },
+
     data () {
       return {
         isUserScrollUI: false
       };
     },
-  
+
     methods: {
-      touchstart (e) {
-        this.isUserScrollUI = e.path.includes(this.$refs.nav.$el);
+      touchstart (event) {
+        this.isUserScrollUI = event
+          .composedPath()
+          .includes(this.$refs.nav.$el);
       },
-  
+
       touchend () {
         this.isUserScrollUI = false;
       }
@@ -31,18 +39,18 @@
 
 <style scoped lang="scss">
     @import "src/scss/variables";
-    
+
     .ui {
         width: 100%;
         height: 100%;
         overflow: auto;
         position: fixed;
         pointer-events: none;
-    
+
         @media screen and (min-width: 768px) {
             overflow: hidden;
         }
-        
+
         &.user-scroll-ui {
             pointer-events: auto;
         }
